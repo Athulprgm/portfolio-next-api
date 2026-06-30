@@ -20,7 +20,7 @@ export async function PUT(
 
   try {
     const { id } = await params;
-    const existing = await prisma.project.findUnique({ where: { id: BigInt(id) } });
+    const existing = await prisma.project.findUnique({ where: { id: Number(id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -90,7 +90,7 @@ export async function PUT(
     };
 
     const updated = await prisma.project.update({
-      where: { id: BigInt(id) },
+      where: { id: Number(id) },
       data: projectData
     });
 
@@ -114,7 +114,7 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const existing = await prisma.project.findUnique({ where: { id: BigInt(id) } });
+    const existing = await prisma.project.findUnique({ where: { id: Number(id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -134,7 +134,7 @@ export async function DELETE(
       }
     } catch(e) {}
 
-    await prisma.project.delete({ where: { id: BigInt(id) } });
+    await prisma.project.delete({ where: { id: Number(id) } });
 
     return NextResponse.json({ data: { message: "Project deleted successfully" } });
   } catch (error: any) {

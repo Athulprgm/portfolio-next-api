@@ -19,7 +19,7 @@ export async function PUT(
     // Check if product exists
     const { id } = await params;
     const existing = await prisma.product.findUnique({
-      where: { id: BigInt(id) }
+      where: { id: Number(id) }
     });
     
     if (!existing) {
@@ -27,7 +27,7 @@ export async function PUT(
     }
 
     const product = await prisma.product.update({
-      where: { id: BigInt(id) },
+      where: { id: Number(id) },
       data: body
     });
 
@@ -54,7 +54,7 @@ export async function DELETE(
     // Check if product exists
     const { id } = await params;
     const existing = await prisma.product.findUnique({
-      where: { id: BigInt(id) }
+      where: { id: Number(id) }
     });
     
     if (!existing) {
@@ -62,7 +62,7 @@ export async function DELETE(
     }
 
     await prisma.product.delete({
-      where: { id: BigInt(id) }
+      where: { id: Number(id) }
     });
 
     return NextResponse.json({

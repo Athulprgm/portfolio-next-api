@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params;
     const project = await prisma.project.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: Number(id) },
     });
 
     if (!project) {
