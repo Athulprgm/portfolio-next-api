@@ -8,8 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const project = await prisma.project.findUnique({
-      where: { id: BigInt((await params).id) },
+      where: { id: BigInt(id) },
     });
 
     if (!project) {
@@ -17,7 +18,7 @@ export async function GET(
     }
 
     // Parse JSON fields
-    let parsedProject = { ...project };
+    const parsedProject = { ...project };
     if (typeof parsedProject.tags === 'string') {
       try { parsedProject.tags = JSON.parse(parsedProject.tags); } catch (e) {}
     }

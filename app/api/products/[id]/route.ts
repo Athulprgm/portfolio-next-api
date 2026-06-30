@@ -8,8 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const product = await prisma.product.findUnique({
-      where: { id: BigInt((await params).id) },
+      where: { id: BigInt(id) },
     });
 
     if (!product) {

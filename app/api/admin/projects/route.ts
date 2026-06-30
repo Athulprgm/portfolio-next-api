@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     let parsedData: any = {};
-    let uploadedImages: string[] = [];
+    const uploadedImages: string[] = [];
     let thumbnailPath: string | null = null;
 
     if (contentType.includes("multipart/form-data")) {

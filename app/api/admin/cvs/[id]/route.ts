@@ -19,7 +19,8 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.cv.findUnique({ where: { id: BigInt((await params).id) } });
+    const { id } = await params;
+    const existing = await prisma.cv.findUnique({ where: { id: BigInt(id) } });
     if (!existing) {
       return NextResponse.json({ error: "CV not found" }, { status: 404 });
     }
@@ -56,7 +57,7 @@ export async function PUT(
     }
 
     const updated = await prisma.cv.update({
-      where: { id: BigInt((await params).id) },
+      where: { id: BigInt(id) },
       data: {
         title: parsedData.title !== undefined ? parsedData.title : existing.title,
         file_path: cvFilePath || (parsedData.file_url !== undefined ? parsedData.file_url : existing.file_path),
@@ -83,7 +84,8 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.cv.findUnique({ where: { id: BigInt((await params).id) } });
+    const { id } = await params;
+    const existing = await prisma.cv.findUnique({ where: { id: BigInt(id) } });
     if (!existing) {
       return NextResponse.json({ error: "CV not found" }, { status: 404 });
     }
@@ -93,7 +95,7 @@ export async function DELETE(
       await fs.unlink(oldPath).catch(() => {});
     }
 
-    await prisma.cv.delete({ where: { id: BigInt((await params).id) } });
+    await prisma.cv.delete({ where: { id: BigInt(id) } });
 
     return NextResponse.json({ data: { message: "CV deleted successfully" } });
   } catch (error: any) {

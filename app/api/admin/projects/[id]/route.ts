@@ -19,14 +19,15 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.project.findUnique({ where: { id: BigInt((await params).id) } });
+    const { id } = await params;
+    const existing = await prisma.project.findUnique({ where: { id: BigInt(id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
     const contentType = request.headers.get("content-type") || "";
     let parsedData: any = {};
-    let uploadedImages: string[] = [];
+    const uploadedImages: string[] = [];
     let thumbnailPath: string | null = null;
 
     if (contentType.includes("multipart/form-data")) {
@@ -89,7 +90,7 @@ export async function PUT(
     };
 
     const updated = await prisma.project.update({
-      where: { id: BigInt((await params).id) },
+      where: { id: BigInt(id) },
       data: projectData
     });
 
@@ -112,7 +113,8 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.project.findUnique({ where: { id: BigInt((await params).id) } });
+    const { id } = await params;
+    const existing = await prisma.project.findUnique({ where: { id: BigInt(id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -132,7 +134,7 @@ export async function DELETE(
       }
     } catch(e) {}
 
-    await prisma.project.delete({ where: { id: BigInt((await params).id) } });
+    await prisma.project.delete({ where: { id: BigInt(id) } });
 
     return NextResponse.json({ data: { message: "Project deleted successfully" } });
   } catch (error: any) {
