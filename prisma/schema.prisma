@@ -3,17 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model User {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(255)
   email      String   @unique @db.VarChar(255)
   password   String   @db.VarChar(255)
   role       Role     @default(user)
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("users")
 }
@@ -24,14 +24,14 @@ enum Role {
 }
 
 model Product {
-  id          BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
-  name        String         @db.VarChar(255)
-  description String?        @db.Text
-  price       Decimal        @db.Decimal(10, 2)
-  stock       Int            @default(0)
-  status      ProductStatus  @default(active)
-  created_at  DateTime       @default(now()) @db.Timestamp(0)
-  updated_at  DateTime       @default(now()) @updatedAt @db.Timestamp(0)
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  description String?
+  price       Decimal       @db.Decimal(10, 2)
+  stock       Int           @default(0)
+  status      ProductStatus @default(active)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @default(now()) @updatedAt
 
   @@index([status], map: "idx_products_status")
   @@index([price], map: "idx_products_price")
@@ -45,28 +45,28 @@ enum ProductStatus {
 }
 
 model Project {
-  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(255)
-  description String   @db.Text
-  image       String   @db.Text
+  description String
+  image       String
   thumbnail   String?  @db.VarChar(255)
-  tags        String?  @db.Text
+  tags        String?
   sort_order  Int      @default(0)
   has_details Boolean  @default(true)
-  detail_data String?  @db.Text
-  created_at  DateTime @default(now()) @db.Timestamp(0)
-  updated_at  DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  detail_data String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
 
   @@map("projects")
 }
 
 model Cv {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int      @id @default(autoincrement())
   title      String   @db.VarChar(255)
   file_path  String   @db.VarChar(255)
   sort_order Int      @default(0)
-  created_at DateTime @default(now()) @db.Timestamp(0)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("cvs")
 }
