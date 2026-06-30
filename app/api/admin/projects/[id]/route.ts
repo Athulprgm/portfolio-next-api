@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminKey, getBearerToken, verifyAuth } from "@/lib/auth-middleware";
@@ -8,7 +9,7 @@ import crypto from "crypto";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
     const token = getBearerToken(request);
@@ -18,7 +19,7 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.project.findUnique({ where: { id: BigInt(params.id) } });
+    const existing = await prisma.project.findUnique({ where: { id: BigInt((await params).id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -88,7 +89,7 @@ export async function PUT(
     };
 
     const updated = await prisma.project.update({
-      where: { id: BigInt(params.id) },
+      where: { id: BigInt((await params).id) },
       data: projectData
     });
 
@@ -101,7 +102,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
     const token = getBearerToken(request);
@@ -111,7 +112,7 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.project.findUnique({ where: { id: BigInt(params.id) } });
+    const existing = await prisma.project.findUnique({ where: { id: BigInt((await params).id) } });
     if (!existing) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -131,7 +132,7 @@ export async function DELETE(
       }
     } catch(e) {}
 
-    await prisma.project.delete({ where: { id: BigInt(params.id) } });
+    await prisma.project.delete({ where: { id: BigInt((await params).id) } });
 
     return NextResponse.json({ data: { message: "Project deleted successfully" } });
   } catch (error: any) {

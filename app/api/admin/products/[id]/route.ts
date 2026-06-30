@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeData } from "@/lib/utils";
@@ -5,7 +6,7 @@ import { verifyAuth } from "@/lib/auth-middleware";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authPayload = verifyAuth(request);
@@ -17,7 +18,7 @@ export async function PUT(
     
     // Check if product exists
     const existing = await prisma.product.findUnique({
-      where: { id: BigInt(params.id) }
+      where: { id: BigInt((await params).id) }
     });
     
     if (!existing) {
@@ -25,7 +26,7 @@ export async function PUT(
     }
 
     const product = await prisma.product.update({
-      where: { id: BigInt(params.id) },
+      where: { id: BigInt((await params).id) },
       data: body
     });
 
@@ -41,7 +42,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authPayload = verifyAuth(request);
@@ -51,7 +52,7 @@ export async function DELETE(
 
     // Check if product exists
     const existing = await prisma.product.findUnique({
-      where: { id: BigInt(params.id) }
+      where: { id: BigInt((await params).id) }
     });
     
     if (!existing) {
@@ -59,7 +60,7 @@ export async function DELETE(
     }
 
     await prisma.product.delete({
-      where: { id: BigInt(params.id) }
+      where: { id: BigInt((await params).id) }
     });
 
     return NextResponse.json({

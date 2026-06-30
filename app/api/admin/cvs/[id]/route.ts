@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminKey, getBearerToken, verifyAuth } from "@/lib/auth-middleware";
@@ -8,7 +9,7 @@ import crypto from "crypto";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
     const token = getBearerToken(request);
@@ -18,7 +19,7 @@ export async function PUT(
   }
 
   try {
-    const existing = await prisma.cv.findUnique({ where: { id: BigInt(params.id) } });
+    const existing = await prisma.cv.findUnique({ where: { id: BigInt((await params).id) } });
     if (!existing) {
       return NextResponse.json({ error: "CV not found" }, { status: 404 });
     }
@@ -55,7 +56,7 @@ export async function PUT(
     }
 
     const updated = await prisma.cv.update({
-      where: { id: BigInt(params.id) },
+      where: { id: BigInt((await params).id) },
       data: {
         title: parsedData.title !== undefined ? parsedData.title : existing.title,
         file_path: cvFilePath || (parsedData.file_url !== undefined ? parsedData.file_url : existing.file_path),
@@ -72,7 +73,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
     const token = getBearerToken(request);
@@ -82,7 +83,7 @@ export async function DELETE(
   }
 
   try {
-    const existing = await prisma.cv.findUnique({ where: { id: BigInt(params.id) } });
+    const existing = await prisma.cv.findUnique({ where: { id: BigInt((await params).id) } });
     if (!existing) {
       return NextResponse.json({ error: "CV not found" }, { status: 404 });
     }
@@ -92,7 +93,7 @@ export async function DELETE(
       await fs.unlink(oldPath).catch(() => {});
     }
 
-    await prisma.cv.delete({ where: { id: BigInt(params.id) } });
+    await prisma.cv.delete({ where: { id: BigInt((await params).id) } });
 
     return NextResponse.json({ data: { message: "CV deleted successfully" } });
   } catch (error: any) {

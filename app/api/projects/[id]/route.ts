@@ -1,14 +1,15 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeData } from "@/lib/utils";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const project = await prisma.project.findUnique({
-      where: { id: BigInt(params.id) },
+      where: { id: BigInt((await params).id) },
     });
 
     if (!project) {
