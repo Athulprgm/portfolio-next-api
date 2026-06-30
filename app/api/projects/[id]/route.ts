@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeData } from "@/lib/utils";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {

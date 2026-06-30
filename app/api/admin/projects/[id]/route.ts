@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminKey, getBearerToken, verifyAuth } from "@/lib/auth-middleware";
 import { serializeData } from "@/lib/utils";
@@ -8,7 +8,7 @@ import path from "path";
 import crypto from "crypto";
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
@@ -101,7 +101,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminKey(request)) {
